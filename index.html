@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>متحف التراث الإثيوبي والصليب</title>
+  <style>
+    :root {
+      --bg-dark: #121316;
+      --card-bg: #1c1e24;
+      --gold: #d4af37;
+      --gold-hover: #b8972c;
+      --text-main: #f0f2f5;
+      --text-muted: #a0a6b2;
+      --border-color: #2e323b;
+      --correct: #2e7d32;
+      --wrong: #c62828;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    #app-container {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: #16181d;
+      border-left: 1px solid var(--border-color);
+      border-right: 1px solid var(--border-color);
+      position: relative;
+    }
+
+    header {
+      padding: 16px 20px;
+      background-color: rgba(28, 30, 36, 0.95);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .badge {
+      background-color: rgba(212, 175, 55, 0.15);
+      color: var(--gold);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+
+    main {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .hall-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .hall-title {
+      color: var(--gold);
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+
+    .hall-subtitle {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+
+    .item-box {
+      background-color: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .item-box strong {
+      color: var(--gold);
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .sources-btn {
+      background: none;
+      border: 1px dashed var(--gold);
+      color: var(--gold);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      width: 100%;
+      margin: 10px 0;
+    }
+
+    .sources-list {
+      display: none;
+      background-color: #121316;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    .quiz-box {
+      margin-top: 16px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 16px;
+    }
+
+    .quiz-question {
+      font-size: 1rem;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .option-btn {
+      background-color: #242730;
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 12px;
+      border-radius: 8px;
+      text-align: right;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover {
+      border-color: var(--gold);
+    }
+
+    .option-btn.correct {
+      background-color: var(--correct);
+      border-color: var(--correct);
+      color: #fff;
+    }
+
+    .option-btn.wrong {
+      background-color: var(--wrong);
+      border-color: var(--wrong);
+      color: #fff;
+    }
+
+    .next-btn {
+      background-color: var(--gold);
+      color: #121316;
+      border: none;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .next-btn:active {
+      background-color: var(--gold-hover);
+    }
+
+    footer {
+      padding: 16px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+
+<div id="app-container">
+  <header>
+    <div>
+      <h2 style="font-size: 1.1rem; color: #fff;">متحف كنيسة إثيوبيا</h2>
+      <span style="font-size: 0.75rem; color: var(--text-muted);">إعداد الباحث: كيرو</span>
+    </div>
+    <div id="hall-indicator" class="badge">القاعة 1 من 4</div>
+  </header>
+
+  <main id="content-area">
+    <!-- محتوى القاعات سيتغير تفاعلياً بواسطة JavaScript -->
+  </main>
+
+  <footer>مشروع المعسكر التفاعلي للأبحاث الكنسية</footer>
+</div>
+
+<script>
+  const museumData = [
+    {
+      id: 1,
+      badge: "القاعة الأولى",
+      title: "صخور لاليبيلا ومجد التاريخ",
+      subtitle: "الموقع الجغرافي، كنيسة التوحيد، ونحت الصخور",
+      items: [
+        { title: "الموقع والحدود", text: "تقع إثيوبيا في القرن الإفريقي، عاصمتها أديس أبابا (الزهرة الجديدة)، وتحدها شرقاً جيبوتي والصومال، وغرباً السودان وجنوب السودان، وشمالاً إريتريا، وجنوباً كينيا." },
+        { title: "عقيدة التوحيد (تيواهيدو)", text: "كلمة جعزية تعني 'المُوحَّدة'، وتدل على الاتحاد الكامل بين اللاهوت والناسوت في طبيعة واحدة إلهية بشرية متحدة بغير اختلاط ولا تغيير." },
+        { title: "عجائب لاليبيلا الصخرية", text: "11 كنيسة منحوتة بالكامل تحت الأرض داخل الصخور البركانية الحمراء، نُحتت في عهد الملك لاليبيلا كأورشليم جديدة، أشهرها كنيسة مار جرجس المنحوتة كسقف صليبي." }
+      ],
+      sources: [
+        "كتاب قصة الكنيسة القبطية (إيريس حبيب المصري) - ج 3 ص 55.",
+        "كتاب الكنائس الشرقية وأوطانها - ج 3 ص 21-22.",
+        "كتاب تاريخ إثيوبيا (ساهيد أديجوموبي) - ص 28، 32."
+      ],
+      quiz: {
+        question: "كم كنيسة نُحتت في الصخور البركانية في عهد الملك لاليبيلا؟",
+        options: ["7 كنائس", "11 كنيسة", "14 كنيسة", "3 كنائس"],
+        answerIndex: 1
+      }
+    },
+    {
+      id: 2,
+      badge: "القاعة الثانية",
+      title: "خزينة وشفرة الصليب الإثيوبي",
+      subtitle: "رمز شجرة الحياة، صب الشمع المفقود، وبيضة النعامة",
+      items: [
+        { title: "شجرة الحياة وغياب المصلوب", text: "لا يُرسم جسد المسيح مصلوباً على الصليب الإثيوبي؛ إذ يُنظر إليه كـ'شجرة الحياة' المورقة بالقيامة والفداء، وتُصنع زخارفه المفرغة بتقنية صب الشمع المفقود." },
+        { title: "أنواع الصلبان", text: "صليب اليد وقاعدته المربعة التي ترمز لتابوت العهد وقبر آدم، صلبان المواكب المحمولة على عصي، وصلبان القباب المرتفعة." },
+        { title: "سر بيضة النعامة", text: "توضع بيضة نعامة تحت صليب القبة لترمز لقيامة المسيح من القبر، والتنبيه على دوام اليقظة والتركيز في الصلاة كما ترعى النعامة بيضها." }
+      ],
+      sources: [
+        "دراسة The Chemistry of Devotion (Belay & Ridwan) - ص 175-181.",
+        "كتاب The Ethiopian Orthodox Church’s Tradition on the Holy Cross (Getatchew Haile) - ص 1-4، 52.",
+        "أطروحة Liturgical Cosmology (Gebru Mebratu) - ص 180، 192."
+      ],
+      quiz: {
+        question: "إلى ماذا يرمز المربع الموجود في قاعدة صليب اليد الذي يحمله الكاهن؟",
+        options: ["أركان الكنيسة الأربعة", "تابوت العهد وقبر آدم", "أنهار الفردوس", "ملوك أكسوم"],
+        answerIndex: 1
+      }
+    },
+    {
+      id: 3,
+      badge: "القاعة الثالثة",
+      title: "الهيكل وأسرار الخدمة الليتورجية",
+      subtitle: "المعمار الدائري، ملعقة الصليب، وأغطية الماحفد",
+      items: [
+        { title: "التخطيط الدائري الثلاثي", text: "ينقسم المبنى لثلاث دوائر: قدس الأقداس في المركز (حيث التابوت والمذبح)، والقدس للأسرار، وقداس المزامير للترتيل." },
+        { title: "طقوس المذبح والكأس", text: "تُغطى الكأس بأغطية 'الماحفد' الرمزية للأكفان، وتُدار الكأس صليبياً أثناء التقديس، وتُستخدم 'ملعقة الصليب' لمناولة الدم المقدس." },
+        { title: "عصا الإنشاد والهارَغ", text: "يتكئ المرتلون على عصا تنتهي بمقبض صليبي متداخل لضبط الإيقاع، وتُزخرف المخطوطات القديمة بإطارات صليبية ملونة تُعرف بـ'الهارَغ'." }
+      ],
+      sources: [
+        "كتاب قداسات الكنيسة الإثيوبية (ترجمة القس مرقس داود) - ص 15، 30، 201.",
+        "كتاب الكنيسة الأرثوذكسية الإثيوبية (كريستين شايو) - ص 160-170، 185.",
+        "دراسة Two Ethiopian Icons (Marilyn Heldman) - ص 157، 162."
+      ],
+      quiz: {
+        question: "ما الاسم الطقسي للأغطية الحريرية التي تُغطى بها الكأس رمزاً لكفن المسيح؟",
+        options: ["الهارَغ", "الماحْفَد", "التيلا", "الزيما"],
+        answerIndex: 1
+      }
+    },
+    {
+      id: 4,
+      badge: "القاعة الرابعة",
+      title: "ساحة الأنوار وعيد مَسْكَل",
+      subtitle: "شعلة الداميرا، زهور أدي أبابا، ومواعيد العيد",
+      items: [
+        { title: "هرم الداميرا وزهور مَسْكَل", text: "يُشيد هرم خشبي ضخم في ساحة مَسْكَل يُتوّج بصليب وزهور صفراء برية ('أدي أبابا')، وتُشعل النار غروباً تذكاراً لمشاعل الملكة هيلانة." },
+        { title: "بركة الرماد واتجاه السقوط", text: "يرسم المؤمنون علامة الصليب برماد الشعلة على جباههم للحماية والبركة، ويستبشر الموروث باتجاه سقوط الشعلة كعلامة لخصوبة العام." },
+        { title: "مواعيد العيد والذخيرة", text: "يُحتفل به في 17 مسكرم (27 سبتمبر)، وتُحفظ قطعة من عود الصليب الحقيقي التي أُهديت للإمبراطور داويت في دير جبل 'جيشين أمبا'." }
+      ],
+      sources: [
+        "أطروحة Liturgical Cosmology (Gebru Mebratu) - ص 58، 63-65.",
+        "كتاب The Ethiopian Orthodox Church’s Tradition on the Holy Cross - ص 4، 13-15.",
+        "كتاب الرهبنة الحبشية - ص 134-135."
+      ],
+      quiz: {
+        question: "في أي دير جبلي تحتفظ كنيسة إثيوبيا بقطعة من خشب الصليب الحقيقي؟",
+        options: ["دير البرموس", "دير جيشين أمبا (مريم)", "دير سانت كاترين", "دير المحرق"],
+        answerIndex: 1
+      }
+    }
+  ];
+
+  let currentHallIndex = 0;
+
+  function renderHall(index) {
+    const hall = museumData[index];
+    const container = document.getElementById('content-area');
+    document.getElementById('hall-indicator').innerText = `القاعة ${index + 1} من ${museumData.length}`;
+
+    let itemsHtml = hall.items.map(item => `
+      <div class="item-box">
+        <strong>${item.title}</strong>
+        ${item.text}
+      </div>
+    `).join('');
+
+    let sourcesHtml = hall.sources.map(src => `<li>${src}</li>`).join('');
+
+    container.innerHTML = `
+      <div class="hall-card">
+        <span class="badge">${hall.badge}</span>
+        <h2 class="hall-title" style="margin-top: 8px;">${hall.title}</h2>
+        <p class="hall-subtitle">${hall.subtitle}</p>
+
+        ${itemsHtml}
+
+        <button class="sources-btn" onclick="toggleSources()">عرض توثيق ومصادر القاعة</button>
+        <div id="sources-box" class="sources-list">
+          <ul style="padding-right: 16px;">${sourcesHtml}</ul>
+        </div>
+
+        <div class="quiz-box">
+          <p class="quiz-question">سؤال اجتياز القاعة: ${hall.quiz.question}</p>
+          <div class="options">
+            ${hall.quiz.options.map((opt, i) => `
+              <button class="option-btn" onclick="checkAnswer(${i}, ${hall.quiz.answerIndex}, this)">${opt}</button>
+            `).join('')}
+          </div>
+          <button id="next-hall-btn" class="next-btn" onclick="nextHall()">
+            ${index < museumData.length - 1 ? "اجتزت القاعة! ادخل للقاعة التالية" : "عرض مسك الختام والوسام النهائي"}
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function toggleSources() {
+    const box = document.getElementById('sources-box');
+    box.style.display = box.style.display === 'block' ? 'none' : 'block';
+  }
+
+  function checkAnswer(selected, correct, btn) {
+    const buttons = btn.parentElement.querySelectorAll('.option-btn');
+    buttons.forEach(b => b.disabled = true);
+
+    if (selected === correct) {
+      btn.classList.add('correct');
+      document.getElementById('next-hall-btn').style.display = 'block';
+    } else {
+      btn.classList.add('wrong');
+      buttons[correct].classList.add('correct');
+      setTimeout(() => {
+        alert("إجابة غير صحيحة، حاول التركيز في قراءة معروضات القاعة مجدداً!");
+        buttons.forEach(b => {
+          b.disabled = false;
+          b.classList.remove('wrong', 'correct');
+        });
+      }, 1200);
+    }
+  }
+
+  function nextHall() {
+    if (currentHallIndex < museumData.length - 1) {
+      currentHallIndex++;
+      renderHall(currentHallIndex);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      showCompletionScreen();
+    }
+  }
+
+  function showCompletionScreen() {
+    const container = document.getElementById('content-area');
+    document.getElementById('hall-indicator').innerText = "تم التتويج بنجاح";
+
+    container.innerHTML = `
+      <div class="hall-card" style="text-align: center; padding: 30px 20px;">
+        <div style="font-size: 3rem; margin-bottom: 10px;">🎖️</div>
+        <h2 style="color: var(--gold); margin-bottom: 10px;">وسام مستكشف التراث الإثيوبي</h2>
+        <p style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
+          تهانينا لكيرو! لقد اجتزت جميع قاعات المتحف وفككت شفرات الصليب والمعمار والطقوس في إثيوبيا بدقة أكاديمية وتوثيق كامل.
+        </p>
+
+        <div class="item-box" style="text-align: right;">
+          <strong>فقرة مسك الختام:</strong>
+          «وَأَمَّا مِنْ جِهَتِي، فَحَاشَا لِي أَنْ أَفْتَخِرَ إِلاَّ بِصَلِيبِ رَبِّنَا يَسُوعَ الْمَسِيحِ» (غل 6: 14).<br><br>
+          الصليب في التراث الإثيوبي ليس أداة للموت، بل هو شجرة الحياة، وحصن الإيمان، ونور القيامة الممتد عبر القرون.
+        </div>
+
+        <button class="next-btn" style="display: block; margin-top: 20px;" onclick="location.reload()">
+          إعادة جولة المتحف من البداية
+        </button>
+      </div>
+    `;
+  }
+
+  // بدء تشغيل القاعة الأولى
+  renderHall(currentHallIndex);
+</script>
+
+</body>
+</html>
